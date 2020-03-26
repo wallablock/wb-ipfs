@@ -1,7 +1,8 @@
+const request = require('request-promise');
+
 module.exports = {
     IPFSread: async function (IPFSip,IPFShash) {
         const prefix = 'http://'+IPFSip+':8080';
-        const request = require('request-promise');
         const body = await request(prefix + '/api/v0/ls/' + IPFShash);
         let responseJSON = JSON.parse(body);
         var links = [];
