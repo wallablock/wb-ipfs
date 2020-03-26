@@ -2,13 +2,18 @@
   "name": "wb-ipfs",
   "version": "0.1.0",
   "description": "",
-  "main": "ipfs.js",
+  "main": "dist/ipfs.js",
+  "types": "dist/ipfs.t.ds",
   "dependencies": {
     "request": "^2.88.2",
     "request-promise": "^4.2.5"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "typescript": "^3.8.3"
+  },
   "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
