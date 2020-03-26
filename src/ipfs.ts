@@ -1,6 +1,6 @@
 import request from 'request-promise';
 
-export async function IPFSread(IPFSip, IPFShash) {
+export async function IPFSread(IPFSip: string, IPFShash: string): Promise<string[]> {
     const prefix = 'http://' + IPFSip + ':8080';
     const body = await request(prefix + '/api/v0/ls/' + IPFShash);
     let responseJSON = JSON.parse(body);

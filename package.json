@@ -5,10 +5,10 @@
   "main": "dist/ipfs.js",
   "types": "dist/ipfs.t.ds",
   "dependencies": {
-    "request": "^2.88.2",
     "request-promise": "^4.2.5"
   },
   "devDependencies": {
+    "@types/request-promise": "^4.1.46",
     "typescript": "^3.8.3"
   },
   "scripts": {
