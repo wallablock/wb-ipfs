@@ -7,6 +7,6 @@ export async function IPFSread(IPFSip: string, IPFShash: string): Promise<string
     if (responseJSON.Objects[0].Links.length == 0) {
         return [`${prefix}/ipfs/${responseJSON.Objects[0].Hash}`];
     } else {
-        return responseJSON.Objects[0].Links.map((link: any) => link.Hash);
+        return responseJSON.Objects[0].Links.map((link: any) => `${prefix}/ipfs/${link.Hash}`);
     }
 }
