@@ -20,5 +20,5 @@ export async function IPFSread(IPFSip: string, IPFShash: string): Promise<string
 
 async function checkImage(link: string): Promise<boolean> {
     let head = await request.head(link);
-    return (head["content-type"] == "image/jpeg");
+    return (head["content-type"] == "image/jpeg" || head["content-type"] == "image/png");
 }
