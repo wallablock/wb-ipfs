@@ -1,16 +1,15 @@
 import request from 'request-promise';
-/*
-import fs from 'fs';
 import ipfsClient from 'ipfs-http-client';
-*/
+import { globSource } from 'ipfs-http-client';
 
 export class IpfsConnection {
     constructor(
         public ip: string,
-        public port: number = 8080) {}
+        public publicPort: number = 8080,
+        public privatePort: number = 5001) {}
 
     private get prefix() {
-        return `http://${this.ip}:${this.port}`
+        return `http://${this.ip}:${this.publicPort}`
     }
 
     public async read(hash: string): Promise<string[]> {
@@ -34,21 +33,16 @@ export class IpfsConnection {
         }
     }
 
+    public async write(filePath: string): Promise<string> {
+        const link = `http://${this.ip}:${this.privatePort}`;
+        let ipfs = ipfsClient(link);
+        let file;
+        for await (file of ipfs.add(globSource(filePath, { recursive: true}))) {}
+        return file.cid;
+    }
+
     private async checkImage(link: string): Promise<boolean> {
         const contType = (await request.head(link))["Content-Type"];
         return (contType === "image/jpeg" || contType === "image/png");
     }
 }
-
-// Unfinished code; not converting
-/*
-//Serà substituït per una crida al proxy, el proxy tindrà un codi similar a aquest
-export async function IPFSwrite(IPFSip: string, filePath: string): Promise<string> {
-    let link:string = `http://${IPFSip}:5001`
-    let ipfs = ipfsClient(link);
-    const { globSource } = ipfsClient;
-    let file;
-    for await (file of ipfs.add(globSource(filePath, { recursive: true }))) {}
-    return file.cid;
-}
-*/
