@@ -1,6 +1,5 @@
-import request from 'request-promise';
 import fs from 'fs';
-import path from 'path';
+import request from 'request-promise';
 import ipfsClient from 'ipfs-http-client';
 
 export async function IPFSread(IPFSip: string, IPFShash: string): Promise<string[]> {
@@ -26,45 +25,12 @@ async function checkImage(link: string): Promise<boolean> {
     return (head["content-type"] == "image/jpeg" || head["content-type"] == "image/png");
 }
 
-//Only works if node is at localhost
-export async function IPFSwrite(IPFSip: string, filePath: string) {
-    let link = `http://${IPFSip}:5001`
-    let files = getAllFiles(filePath);
+//Serà substituït per una crida al proxy, el proxy tindrà un codi similar a aquest
+export async function IPFSwrite(IPFSip: string, filePath: string): Promise<string> {
+    let link:string = `http://${IPFSip}:5001`
     let ipfs = ipfsClient(link);
-    let res = await ipfs.add(files,[],[]);
-    return res;
-}
-
-type IPFSFile = {
-    path: string;
-    mtime
-}
-
-function getAllFiles(dirPath: string, originalPath, arrayOfFiles) {
-  files = fs.readdirSync(dirPath)
-
-  arrayOfFiles = arrayOfFiles || []
-  originalPath = originalPath || path.resolve(dirPath, "..")
-
-  folder = path.relative(originalPath, path.join(dirPath, "/"))
-
-  arrayOfFiles.push({
-      path: folder.replace(/\\/g, "/"),
-      mtime: fs.statSync(folder).mtime
-  })
-
-  files.forEach(function (file) {
-      if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-          arrayOfFiles = getAllFiles(dirPath + "/" + file, originalPath, arrayOfFiles)
-      } else {
-          file = path.join(dirPath, "/", file)
-
-          arrayOfFiles.push({
-              path: path.relative(originalPath, file).replace(/\\/g, "/"),
-              content: fs.readFileSync(file),
-              mtime: fs.statSync(file).mtime
-          })
-      }
-  })
-  return arrayOfFiles;
+    const { globSource } = ipfsClient;
+    let file;
+    for await (file of ipfs.add(globSource(filePath, { recursive: true }))) {}
+    return file.cid;
 }
