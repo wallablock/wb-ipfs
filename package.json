@@ -2,8 +2,8 @@
   "name": "wb-ipfs",
   "version": "0.1.0",
   "description": "",
-  "main": "dist/ipfs.js",
-  "types": "dist/ipfs.t.ds",
+  "main": "./dist/ipfs.js",
+  "types": "./dist/ipfs.t.ds",
   "dependencies": {
     "@types/request-promise": "^4.1.46",
     "ipfs-http-client": "^43.0.0",
