@@ -24,7 +24,6 @@ export class IpfsConnection {
         } else {
             let links = [];
             for (let l of response.Objects[0].Links) {
-                console.log(l);
                 const link = `${this.prefix}/ipfs/${l.Hash}`;
                 if (await this.checkImage(link)) {
                     links.push(link);
