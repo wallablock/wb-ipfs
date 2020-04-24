@@ -1,4 +1,4 @@
-import request from "request-promise";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 
 interface OfferDirInfo {
     descLink: string | null,
@@ -6,24 +6,28 @@ interface OfferDirInfo {
 }
 
 export class IpfsConnection {
+    private proxyFetch: AxiosInstance;
+
     constructor(
-        public proxyUrl: string) {}
+        public readonly proxyUrl: string)
+    {
+        this.proxyFetch = axios.create({
+            baseURL: proxyUrl
+        })
+    }
 
     public coverUrl(dirCid: string): string {
         return `${this.proxyUrl}/wb/${dirCid}/cover`;
     }
 
     public async fetchDesc(dirCid: string): Promise<string | null> {
-        return request(`${this.proxyUrl}/wb/${dirCid}/desc`);
+        return await this.proxyFetch.get(`/wb/${dirCid}/desc`);
         /* TODO: Error handling */
     }
 
     public async getAllImagesUrl(dirCid: string): Promise<string[]> {
-        const dirInfo: OfferDirInfo = await request({
-            url: `${this.proxyUrl}/wb/${dirCid}`,
-            json: true
-        });
+        const dirInfoReq: AxiosResponse<OfferDirInfo> = await this.proxyFetch.get(`/wb/${dirCid}`);
         /* TODO: Error handling */
-        return dirInfo.imagesLink.map(imgCid => `${this.proxyUrl}/${imgCid}`);
+        return dirInfoReq.data.imagesLink.map(imgCid => `${this.proxyUrl}/${imgCid}`);
     }
 }

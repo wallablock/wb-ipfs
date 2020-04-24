@@ -5,10 +5,8 @@
   "main": "./dist/ipfs.js",
   "types": "./dist/ipfs.d.ts",
   "dependencies": {
-    "@types/request-promise": "^4.1.46",
+    "axios": "^0.19.2",
     "ipfs-http-client": "^43.0.0",
-    "request": "^2.34",
-    "request-promise": "^4.2.5",
     "typescript": "^3.8.3"
   },
   "scripts": {
