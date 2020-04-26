@@ -7,27 +7,27 @@ interface OfferDirInfo {
 
 export class IpfsConnection {
     private proxyFetch: AxiosInstance;
-
     constructor(
         public readonly proxyUrl: string)
     {
-        this.proxyFetch = axios.create({
+            this.proxyFetch = axios.create({
             baseURL: proxyUrl
         })
     }
 
-    public coverUrl(dirCid: string): string {
+    public async coverUrl(dirCid: string): Promise<string> {
+        //Request to check that link doesn't respond with 404
+        let response = await this.proxyFetch.get(`/wb/${dirCid}/cover`);
         return `${this.proxyUrl}/wb/${dirCid}/cover`;
     }
 
     public async fetchDesc(dirCid: string): Promise<string | null> {
-        return await this.proxyFetch.get(`/wb/${dirCid}/desc`);
-        /* TODO: Error handling */
+        let response = await this.proxyFetch.get(`/wb/${dirCid}/desc`);
+        return response.data;
     }
 
     public async getAllImagesUrl(dirCid: string): Promise<string[]> {
         const dirInfoReq: AxiosResponse<OfferDirInfo> = await this.proxyFetch.get(`/wb/${dirCid}`);
-        /* TODO: Error handling */
         return dirInfoReq.data.imagesLink.map(imgCid => `${this.proxyUrl}/${imgCid}`);
     }
 }
