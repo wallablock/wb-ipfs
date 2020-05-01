@@ -1,7 +1,7 @@
 {
   "name": "wb-ipfs",
   "version": "0.1.0",
-  "description": "",
+  "description": "IPFS library for Wallablock",
   "main": "./dist/ipfs.js",
   "types": "./dist/ipfs.d.ts",
   "dependencies": {
@@ -13,8 +13,12 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "postinstall": "npm run build",
+    "format": "prettier --write src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "The Wallablock team",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "prettier": "2.0.5"
+  }
 }
