@@ -15,9 +15,7 @@ export class IpfsConnection {
         })
     }
 
-    public async coverUrl(dirCid: string): Promise<string> {
-        //Request to check that link doesn't respond with 404
-        let response = await this.proxyFetch.get(`/wb/${dirCid}/cover`);
+    public coverUrl(dirCid: string): string {
         return `${this.proxyUrl}/wb/${dirCid}/cover`;
     }
 
