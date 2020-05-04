@@ -5,8 +5,12 @@
   "main": "./dist/ipfs.js",
   "types": "./dist/ipfs.d.ts",
   "dependencies": {
+    "@types/mime": "^2.0.1",
+    "@types/node": "^13.13.4",
     "axios": "^0.19.2",
+    "form-data": "^3.0.0",
     "ipfs-http-client": "^43.0.0",
+    "mime": "^2.4.5",
     "typescript": "^3.8.3"
   },
   "scripts": {
