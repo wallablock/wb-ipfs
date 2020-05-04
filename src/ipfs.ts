@@ -7,9 +7,9 @@ interface OfferDirInfo {
   imagesLink: string[];
 }
 
-interface File {
-    name: string,
-    contents: ArrayBuffer
+interface FileWB {
+    name: string;
+    contents: ArrayBuffer;
 }
 
 export class IpfsConnection {
@@ -38,28 +38,27 @@ export class IpfsConnection {
     );
   }
 
-  public async uploadFiles(files:File[]): Promise<string> {
+  public async uploadFiles(files:FileWB[]): Promise<string> {
       let imgCount = 0;
       let form = new FormData();
-      for (let i = 0; i < files.length; ++i) {
-          let file = files[i];
-          let extensionIndex = file.name.lastIndexOf(".");
+      for (let fileWB of files) {
+          let extensionIndex = fileWB.name.lastIndexOf(".");
           if (extensionIndex == -1) throw "No extension";
-          let extension = file.name.slice(
+          let extension = fileWB.name.slice(
             extensionIndex,
-            file.name.length
+            fileWB.name.length
           );
           let newName;
           let mimeType = mime.getType(extension);
           if (!mimeType) throw "Invalid MIME type";
           if (mimeType.startsWith('text/')) {
               newName = 'desc.txt';
-              form.append(newName,file.contents);
+              form.append(newName,fileWB.contents);
           }
           else if (mimeType.startsWith('image/')) {
               if (imgCount < 10) newName = `img0${imgCount}${extension}`;
               else newName = `img${imgCount}${extension}`;
-              form.append(newName,file.contents);
+              form.append(newName,fileWB.contents);
               imgCount++;
           }
           else throw "File with invalid extension";
