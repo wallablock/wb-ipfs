@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import mime from "mime";
 import FormData from "form-data";
+//import fs from "fs";
 
 interface OfferDirInfo {
   descLink: string | null;
@@ -9,6 +10,7 @@ interface OfferDirInfo {
 
 interface FileWB {
     name: string;
+    //contents: fs.ReadStream;
     contents: ArrayBuffer;
 }
 
@@ -38,7 +40,7 @@ export class IpfsConnection {
     );
   }
 
-  public async uploadFiles(files:FileWB[]): Promise<any> {
+  public async uploadFiles(files:FileWB[]): Promise<string> {
       let imgCount = 0;
       let form = new FormData();
       try {
@@ -64,17 +66,25 @@ export class IpfsConnection {
               }
               else throw "File with invalid extension";
           }
-          console.log(form);
           let response = await this.proxyFetch.post('/wb/upload', form, {
-              headers: {
-                  'Content-Type': 'multipart/form-data'
-              }
+              headers: form.getHeaders()
           });
-          return response;
+          return response.data;
       }
       catch (err) {
           console.log(err);
       }
-      return;
+      return "Error";
   }
 }
+
+/*async function test() {
+    let ipfs = new IpfsConnection("http://192.168.1.20:3000");
+    let files:FileWB[] = [
+        {name: "jajalol.jpg",contents: fs.createReadStream("/home/guillem/Desktop/Wallablock/tests/ofertaValida/img00.jpg")},
+        {name: "uwu.txt",contents: fs.createReadStream("/home/guillem/Desktop/Wallablock/tests/ofertaValida/desc.txt")},
+        {name: "ei.jpg",contents: fs.createReadStream("/home/guillem/Desktop/Wallablock/tests/ofertaValida/img01.jpg")},
+    ]
+    console.log(await ipfs.uploadFiles(files));
+}
+test();*/
