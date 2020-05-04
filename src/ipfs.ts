@@ -38,36 +38,43 @@ export class IpfsConnection {
     );
   }
 
-  public async uploadFiles(files:FileWB[]): Promise<string> {
+  public async uploadFiles(files:FileWB[]): Promise<any> {
       let imgCount = 0;
       let form = new FormData();
-      for (let fileWB of files) {
-          let extensionIndex = fileWB.name.lastIndexOf(".");
-          if (extensionIndex == -1) throw "No extension";
-          let extension = fileWB.name.slice(
-            extensionIndex,
-            fileWB.name.length
-          );
-          let newName;
-          let mimeType = mime.getType(extension);
-          if (!mimeType) throw "Invalid MIME type";
-          if (mimeType.startsWith('text/')) {
-              newName = 'desc.txt';
-              form.append(newName,fileWB.contents);
+      try {
+          for (let fileWB of files) {
+              let extensionIndex = fileWB.name.lastIndexOf(".");
+              if (extensionIndex == -1) throw "No extension";
+              let extension = fileWB.name.slice(
+                extensionIndex,
+                fileWB.name.length
+              );
+              let newName;
+              let mimeType = mime.getType(extension);
+              if (!mimeType) throw "Invalid MIME type";
+              if (mimeType.startsWith('text/')) {
+                  newName = 'desc.txt';
+                  form.append(newName,fileWB.contents);
+              }
+              else if (mimeType.startsWith('image/')) {
+                  if (imgCount < 10) newName = `img0${imgCount}${extension}`;
+                  else newName = `img${imgCount}${extension}`;
+                  form.append(newName,fileWB.contents);
+                  imgCount++;
+              }
+              else throw "File with invalid extension";
           }
-          else if (mimeType.startsWith('image/')) {
-              if (imgCount < 10) newName = `img0${imgCount}${extension}`;
-              else newName = `img${imgCount}${extension}`;
-              form.append(newName,fileWB.contents);
-              imgCount++;
-          }
-          else throw "File with invalid extension";
+          console.log(form);
+          let response = await this.proxyFetch.post('/wb/upload', form, {
+              headers: {
+                  'Content-Type': 'multipart/form-data'
+              }
+          });
+          return response;
       }
-      let response:AxiosResponse = await this.proxyFetch.post('/wb/upload', form, {
-          headers: {
-              'Content-Type': 'multipart/form-data',
-          }
-      });
-      return response.data;
+      catch (err) {
+          console.log(err);
+      }
+      return;
   }
 }
