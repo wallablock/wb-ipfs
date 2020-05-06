@@ -1,7 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import mime from "mime";
-import FormData from "form-data";
-//import fs from "fs";
 
 interface OfferDirInfo {
   descLink: string | null;
@@ -40,51 +38,42 @@ export class IpfsConnection {
     );
   }
 
-  public async uploadFiles(files:FileWB[]): Promise<string> {
+  public async uploadFiles(files:File[], desc:File): Promise<string> {
       let imgCount = 0;
       let form = new FormData();
-      try {
-          for (let fileWB of files) {
-              let extensionIndex = fileWB.name.lastIndexOf(".");
-              if (extensionIndex == -1) throw "No extension";
-              let extension = fileWB.name.slice(
-                extensionIndex,
-                fileWB.name.length
-              );
-              let newName;
-              let mimeType = mime.getType(extension);
-              if (!mimeType) throw "Invalid MIME type";
-              if (mimeType.startsWith('text/')) {
-                  newName = 'desc.txt';
-                  form.append(newName,fileWB.contents);
-              }
-              else if (mimeType.startsWith('image/')) {
-                  if (imgCount < 10) newName = `img0${imgCount}${extension}`;
-                  else newName = `img${imgCount}${extension}`;
-                  form.append(newName,fileWB.contents);
-                  imgCount++;
-              }
-              else throw "File with invalid extension";
+      
+      if (files.length === 0 && desc === null) {
+        return "";
+      }
+
+      if (desc != null) {
+        form.append("desc.txt", desc);
+      }
+     
+      for (let fileWB of files) {
+          let extensionIndex = fileWB.name.lastIndexOf(".");
+          if (extensionIndex == -1) throw "No extension";
+          let extension = fileWB.name.slice(
+            extensionIndex,
+            fileWB.name.length
+          );
+          let newName;
+          let mimeType = mime.getType(extension);
+          if (!mimeType) throw "Invalid MIME type";
+          if (mimeType.startsWith('image/')) {
+              if (imgCount < 10) newName = `img0${imgCount}${extension}`;
+              else newName = `img${imgCount}${extension}`;
+              form.append(newName,fileWB);
+              imgCount++;
           }
-          let response = await this.proxyFetch.post('/wb/upload', form, {
-              headers: form.getHeaders()
-          });
-          return response.data;
+          else throw "File with invalid extension";
       }
-      catch (err) {
-          console.log(err);
-      }
-      return "Error";
+      let response = await this.proxyFetch.post('/wb/upload', form, {
+          headers: {
+            'content-type': 'multipart/form-data'
+        }
+      });
+      return response.data;
   }
 }
 
-/*async function test() {
-    let ipfs = new IpfsConnection("http://192.168.1.20:3000");
-    let files:FileWB[] = [
-        {name: "jajalol.jpg",contents: fs.createReadStream("/home/guillem/Desktop/Wallablock/tests/ofertaValida/img00.jpg")},
-        {name: "uwu.txt",contents: fs.createReadStream("/home/guillem/Desktop/Wallablock/tests/ofertaValida/desc.txt")},
-        {name: "ei.jpg",contents: fs.createReadStream("/home/guillem/Desktop/Wallablock/tests/ofertaValida/img01.jpg")},
-    ]
-    console.log(await ipfs.uploadFiles(files));
-}
-test();*/
