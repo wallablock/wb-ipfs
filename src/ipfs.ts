@@ -24,6 +24,11 @@ export class IpfsConnection {
     return `${this.proxyUrl}/wb/${dirCid}/cover`;
   }
 
+  public async delete(dirCid: string) {
+    console.log(dirCid);
+    await this.proxyFetch.get(`/wb/delete/${dirCid}`);
+  }
+
   public async fetchDesc(dirCid: string): Promise<string | null> {
     let response = await this.proxyFetch.get(`/wb/${dirCid}/desc`);
     return response.data;
@@ -41,7 +46,7 @@ export class IpfsConnection {
   public async uploadFiles(files:File[], desc:File): Promise<string> {
       let imgCount = 0;
       let form = new FormData();
-      
+
       if (files.length === 0 && desc === null) {
         return "";
       }
@@ -49,7 +54,7 @@ export class IpfsConnection {
       if (desc != null) {
         form.append("desc.txt", desc);
       }
-     
+
       for (let fileWB of files) {
           let extensionIndex = fileWB.name.lastIndexOf(".");
           if (extensionIndex == -1) throw "No extension";
@@ -76,4 +81,3 @@ export class IpfsConnection {
       return response.data;
   }
 }
-
