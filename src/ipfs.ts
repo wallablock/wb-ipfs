@@ -26,7 +26,7 @@ export class IpfsConnection {
 
   public async delete(dirCid: string) {
     console.log(dirCid);
-    await this.proxyFetch.get(`/wb/delete/${dirCid}`);
+    await this.proxyFetch.delete(`/wb/delete/${dirCid}`);
   }
 
   public async fetchDesc(dirCid: string): Promise<string | null> {
