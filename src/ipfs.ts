@@ -30,8 +30,14 @@ export class IpfsConnection {
   }
 
   public async fetchDesc(dirCid: string): Promise<string | null> {
-    let response = await this.proxyFetch.get(`/wb/${dirCid}/desc`);
-    return response.data;
+    try {
+      let response = await this.proxyFetch.get(`/wb/${dirCid}/desc`);
+      return response.data;
+    }
+    catch(error) {
+      if (error.response && error.response.status == 400) return null;
+      else throw "Connection error";
+   }
   }
 
   public async getAllImagesUrl(dirCid: string): Promise<string[]> {
