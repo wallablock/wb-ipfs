@@ -35,7 +35,7 @@ export class IpfsConnection {
       return response.data;
     }
     catch(error) {
-      if (error.response && error.response.status == 400) return null;
+      if (error.response && error.response.status == 404) return null;
       else throw "Connection error";
    }
   }
